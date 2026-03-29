@@ -1,0 +1,24 @@
+name: Mirror to Another Repo
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: {}
+
+jobs:
+  mirror_task:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push to Remote
+        env:
+          PAT: ${{ secrets.CNB_MIRROR_TOKEN }}
+        run: |
+          REMOTE_URL="https://x-access-token:${PAT}@cnb.cool/RN-Auxiliary/FinalRevenge-Releases"
+          git remote add cnb "$REMOTE_URL"
+          git push cnb HEAD:main --force
